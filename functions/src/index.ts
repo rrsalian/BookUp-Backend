@@ -26,6 +26,7 @@ import express from "express";
 // require the cors module
 import cors from "cors";
 import zipCodeRouter from "./routes/zipCodeRouter"
+import { userRouter } from "./routes/userRoutes";
 
 // creates an instance of an Express server
 const app = express();
@@ -37,6 +38,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/", zipCodeRouter);
+app.use("/", userRouter);
 
 // define the port
 //const port = 5001;

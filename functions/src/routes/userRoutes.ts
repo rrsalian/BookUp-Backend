@@ -8,7 +8,8 @@ userRouter.get('/users', async(req,res) => {
     try {
       const client = await getClient();
       const results = await client.db()
-            .collection<User[]>('users').find().toArray(); 
+            .collection<User>('users').find().toArray(); 
+
       console.log(results);
       res.json(results);
 
