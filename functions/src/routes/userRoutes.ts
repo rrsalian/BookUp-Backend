@@ -4,11 +4,11 @@ import { User } from "../models/User";
 
 export const userRouter = express.Router();
 
-userRouter.get('/user', async(req,res) => {
+userRouter.get('/users', async(req,res) => {
     try {
       const client = await getClient();
       const results = await client.db()
-            .collection<User>('users').find().toArray(); 
+            .collection<User[]>('users').find().toArray(); 
       console.log(results);
       res.json(results);
 
@@ -19,7 +19,7 @@ userRouter.get('/user', async(req,res) => {
 }
 )
 
-userRouter.post('/user', async(req, res) => {
+userRouter.post('/users', async(req, res) => {
     try {  
       const user = req.body as User;
       const client = await getClient();
