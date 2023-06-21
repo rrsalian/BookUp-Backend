@@ -1,7 +1,4 @@
-import { ObjectId } from "mongodb";
-
 export interface USZip {
-    _id?: ObjectId;
     zip: string;
     lat: number;
     lon: number
