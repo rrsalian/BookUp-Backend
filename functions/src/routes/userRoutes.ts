@@ -49,3 +49,41 @@ userRouter.post('/users', async(req, res) => {
         res.status(500).json({message: 'Internal Server Error'});
     }
   });
+
+
+userRouter.put('/users/:id',async (req, res) => {
+  try {
+      const id = new ObjectId(req.params.id);
+      const data = req.body as User;
+      delete data._id;
+      const client = await getClient();
+      const result = await client.db().collection<User>('users').replaceOne({_id: id}, data);
+      if (result.modifiedCount === 0) {
+        res.status(404).json({message: "Not Found"});
+      } 
+      else {
+         data._id = new ObjectId(id);
+         res.json(result);
+      }
+    } catch (err) {
+      console.error("FAIL", err);
+      res.status(500).json({ message: "internal Server Error"});
+    }
+  });
+
+userRouter.delete("/users/:id", async (req, res) => {
+  try {
+    const id = new ObjectId(req.params.id);
+    const client = await getClient();
+    const result = await client.db().collection<User>('users').deleteOne({_id: id});
+    if (result.deletedCount === 0) {
+      res.status(404).json({message: "Not Found"});
+    } 
+    else {
+       res.json(result);
+    }
+  } catch (err) {
+    console.error("FAIL", err);
+    res.status(500).json({ message: "internal Server Error"});
+  }
+})
