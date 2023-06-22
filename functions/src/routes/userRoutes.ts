@@ -36,6 +36,22 @@ userRouter.get('/users/:id', async(req, res) => {
   }
 });
 
+userRouter.get('/users/email/:email', async(req, res) => {
+  try {
+    const emailid = req.params.email; 
+    const client = await getClient();
+    const result = await client.db()
+          .collection<User>('users').findOne({ email : emailid }); 
+    console.log(result);
+    res.json(result);
+
+  } catch (err) {
+      console.error("ERROR", err);
+      res.status(500).json({message: 'Internal Server Error'});
+  }
+});
+
+
 userRouter.post('/users', async(req, res) => {
     try {  
       const user = req.body as User;
