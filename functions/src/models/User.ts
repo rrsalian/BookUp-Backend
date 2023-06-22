@@ -6,5 +6,7 @@ export interface User {
     uid: string,
     email: string,
     zipcode: USZip,
-    books: string[]
+    books: string[],
+    //havebooks: string[],
+    //wantbooks: string[],
 }
