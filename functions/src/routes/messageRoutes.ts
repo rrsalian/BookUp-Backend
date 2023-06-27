@@ -89,3 +89,20 @@ messageRouter.put('/messages/:id',async (req, res) => {
       res.status(500).json({ message: "internal Server Error"});
     }
   });
+
+  messageRouter.delete("/messages/:id", async (req, res) => {
+    try {
+      const id = new ObjectId(req.params.id);
+      const client = await getClient();
+      const result = await client.db().collection<Message>('messages').deleteOne({_id: id});
+      if (result.deletedCount === 0) {
+        res.status(404).json({message: "Not Found"});
+      } 
+      else {
+         res.json(result);
+      }
+    } catch (err) {
+      console.error("FAIL", err);
+      res.status(500).json({ message: "internal Server Error"});
+    }
+  })
