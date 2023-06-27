@@ -25,8 +25,9 @@ userRouter.get('/users/book/:isbn', async(req,res) => {
   try {
     const isbn = req.params.isbn;
     const client = await getClient();
-    const results = await client.db()
-          .collection<User>('users').find({books: { $elemMatch: { $gte: isbn, $lte: isbn}}}).toArray();
+    const results = await client.db()              
+            .collection<User>('users').find({ books: { $regex: `${isbn}`, $options: "xi" } }).toArray();
+
           
     console.log(results);
     res.json(results);
