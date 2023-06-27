@@ -9,5 +9,5 @@ export interface Message {
     senderId: ObjectId,       
     swapToIsbn: string,
     state: string,
-    message: string[]
+    message: string
 }
