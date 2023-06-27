@@ -21,6 +21,23 @@ userRouter.get('/users', async(req,res) => {
 }
 )
 
+userRouter.get('/users/book/:isbn', async(req,res) => {
+  try {
+    const isbn = req.params.isbn;
+    const client = await getClient();
+    const results = await client.db()
+          .collection<User>('users').find({books: { $elemMatch: { $gte: isbn, $lte: isbn}}}).toArray();
+          
+    console.log(results);
+    res.json(results);
+
+  } catch (err) {
+      console.error("ERROR", err);
+      res.status(500).json({message: 'Internal Server Error'});
+  }
+}
+)
+
 userRouter.get('/users/:id', async(req, res) => {
   try {
     const _id = new ObjectId(req.params.id); 

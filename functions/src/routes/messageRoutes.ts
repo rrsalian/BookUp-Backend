@@ -5,27 +5,6 @@ import { ObjectId } from "mongodb";
 
 export const messageRouter = express.Router();
 
-messageRouter.get('/messages/:bookId/:user1/:user2', async(req, res) => {
-  try {
-    const bookId = req.params.bookId;
-    const user1 = new ObjectId(req.params.user1);
-    const user2 = new ObjectId(req.params.user2);
-    const client = await getClient();
-    const result = await client.db()
-          .collection<Message>('messages').find( { $or: [
-                                                            { isbn : bookId , senderId: user1, receiverId: user2 },
-                                                            { isbn : bookId , senderId: user2, receiverId: user1 }
-                                                           ]
-                                                    }
-                                                    );
-    console.log(result);
-    res.json(result);
-  } catch (err) {
-      console.error("ERROR", err);
-      res.status(500).json({message: 'Internal Server Error'});
-  }
-});
-
 messageRouter.get('/messages/:id', async(req, res) => {
   try {
     const _id = new ObjectId(req.params.id); 
@@ -35,6 +14,27 @@ messageRouter.get('/messages/:id', async(req, res) => {
     console.log(result);
     res.json(result);
 
+  } catch (err) {
+      console.error("ERROR", err);
+      res.status(500).json({message: 'Internal Server Error'});
+  }
+});
+
+messageRouter.get('/messages/:bookId/:user1/:user2', async(req, res) => {
+  try {
+    const bookId = req.params.bookId;
+    const user1 = new ObjectId(req.params.user1);
+    const user2 = new ObjectId(req.params.user2);
+    const client = await getClient();
+    const result = await client.db()
+          .collection<Message>('messages').find( { $or: [
+                                                            { 'isbn' : bookId , 'senderId': user1, 'receiverId': user2 },
+                                                            { 'isbn' : bookId , 'senderId': user2, 'receiverId': user1 }
+                                                           ]
+                                                    }
+                                                    ).toArray();
+    console.log(result);
+    res.json(result);
   } catch (err) {
       console.error("ERROR", err);
       res.status(500).json({message: 'Internal Server Error'});
