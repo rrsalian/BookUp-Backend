@@ -41,6 +41,24 @@ messageRouter.get('/messages/:bookId/:user1/:user2', async(req, res) => {
   }
 });
 
+messageRouter.get('/messages/user/:user', async(req, res) => {
+  try {
+    const user = new ObjectId(req.params.user);
+    const client = await getClient();
+    const result = await client.db()
+          .collection<Message>('messages').find( { $or: [ { 'senderId': user },
+                                                          { 'receiverId': user }
+                                                        ]
+                                                    }
+                                                    ).toArray();
+    console.log(result);
+    res.json(result);
+  } catch (err) {
+      console.error("ERROR", err);
+      res.status(500).json({message: 'Internal Server Error'});
+  }
+});
+
 messageRouter.get('/messages', async(req,res) => {
     try {
       const client = await getClient();
@@ -58,7 +76,10 @@ messageRouter.get('/messages', async(req,res) => {
 
 messageRouter.post('/messages', async(req, res) => {
   try {  
-    const message = req.body as Message;
+    let message = req.body as Message;
+    message.initiator = new ObjectId(message.initiator);
+    message.receiverId = new ObjectId(message.receiverId);
+    message.senderId = new ObjectId(message.senderId);
     const client = await getClient();
     await client.db()
       .collection<Message>('messages')
@@ -73,10 +94,13 @@ messageRouter.post('/messages', async(req, res) => {
 messageRouter.put('/messages/:id',async (req, res) => {
   try {
       const id = new ObjectId(req.params.id);
-      const data = req.body as Message;
+      let data = req.body as Message;
+      data.initiator = new ObjectId(data.initiator);
+      data.receiverId = new ObjectId(data.receiverId);
+      data.senderId = new ObjectId(data.senderId);
       delete data._id;
       const client = await getClient();
-      const result = await client.db().collection<Message>('users').replaceOne({_id: id}, data);
+      const result = await client.db().collection<Message>('messages').replaceOne({_id: id}, data);
       if (result.modifiedCount === 0) {
         res.status(404).json({message: "Not Found"});
       } 
